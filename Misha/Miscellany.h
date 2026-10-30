@@ -410,6 +410,19 @@ namespace MishaK
 #endif
 		}
 
+		// Define consistently across translation units to disable timing and shared depth bookkeeping.
+#ifdef MISHA_DISABLE_PERFORMANCE_METER
+		struct PerformanceMeter
+		{
+			inline static unsigned int Width = 30;
+
+			PerformanceMeter( char=' ' , unsigned int=2 ) {}
+			void reset( void ) {}
+			std::string operator()( std::string header , bool=true , bool=true ){ return header; }
+			std::string operator()( std::string header , std::string footer , bool=true , bool=true ){ return header + ": " + footer; }
+			unsigned int depth( void ) const { return 0; }
+		};
+#else
 		struct PerformanceMeter
 		{
 			inline static unsigned int Width = 30;
@@ -468,6 +481,7 @@ namespace MishaK
 			unsigned int _depth , _precision;
 			inline static unsigned int _Depth = 1;
 		};
+#endif
 	}
 }
 #endif // MISCELLANY_INCLUDED
