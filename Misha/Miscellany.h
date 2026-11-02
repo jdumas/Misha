@@ -410,6 +410,20 @@ namespace MishaK
 #endif
 		}
 
+		// Define MISHA_ENABLE_PERFORMANCE_METER consistently across translation units to enable profiling.
+		// Enabled meters track per-thread nesting and must remain on their creating thread.
+#ifndef MISHA_ENABLE_PERFORMANCE_METER
+		struct PerformanceMeter
+		{
+			inline static unsigned int Width = 30;
+
+			PerformanceMeter( char=' ' , unsigned int=2 ) {}
+			void reset( void ) {}
+			std::string operator()( std::string header , bool=true , bool=true ){ return header; }
+			std::string operator()( std::string header , std::string footer , bool=true , bool=true ){ return header + ": " + footer; }
+			unsigned int depth( void ) const { return 0; }
+		};
+#else
 		struct PerformanceMeter
 		{
 			inline static unsigned int Width = 30;
@@ -466,8 +480,9 @@ namespace MishaK
 			Timer _timer;
 			char _pad;
 			unsigned int _depth , _precision;
-			inline static unsigned int _Depth = 1;
+			inline static thread_local unsigned int _Depth = 1;
 		};
+#endif
 	}
 }
 #endif // MISCELLANY_INCLUDED
