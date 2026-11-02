@@ -410,8 +410,9 @@ namespace MishaK
 #endif
 		}
 
-		// Define consistently across translation units to disable timing and shared depth bookkeeping.
-#ifdef MISHA_DISABLE_PERFORMANCE_METER
+		// Define MISHA_ENABLE_PERFORMANCE_METER consistently across translation units to enable profiling.
+		// Enabled meters track per-thread nesting and must remain on their creating thread.
+#ifndef MISHA_ENABLE_PERFORMANCE_METER
 		struct PerformanceMeter
 		{
 			inline static unsigned int Width = 30;
@@ -479,7 +480,7 @@ namespace MishaK
 			Timer _timer;
 			char _pad;
 			unsigned int _depth , _precision;
-			inline static unsigned int _Depth = 1;
+			inline static thread_local unsigned int _Depth = 1;
 		};
 #endif
 	}
